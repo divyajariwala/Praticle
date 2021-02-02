@@ -3,21 +3,22 @@ import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'rea
 import _ from 'lodash';
 import settings from '../../../Config/settings';
 
-export class Home extends PureComponent {
+export class PeopleDetail extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
             load: false,
-            peopleData: [],
+            peopleData: {},
         }
     }
     componentDidMount() {
-        this.getPeopleData();
+      console.log(this.props.route.params.url)
+        this.getPeopleDetails(this.props.route.params.url);
     }
 
-    getPeopleData = () => {
+    getPeopleDetails = (url) => {
       this.setState({load: true})
-      const url = settings.baseUrl+settings.endpoints.getPeople;
+      // const url = settings.baseUrl+settings.endpoints.getPeople;
       const params = {
         method: 'GET',
       }
@@ -26,7 +27,7 @@ export class Home extends PureComponent {
       .then(resposeJson => {
         console.log(resposeJson);
         this.setState({load: false}, ()=> {
-          if (resposeJson.results) {
+          if (!_.isUndefined(resposeJson.homeworld)) {
             this.setState({peopleData: resposeJson.results})
           }
         });
@@ -35,13 +36,13 @@ export class Home extends PureComponent {
         console.log(err);
       });
     }
-    goToPeopleDetail = (url) => {
-      this.props.navigation.navigate('PeopleDetail', {url})
+    goToPeopleDetail = () => {
+      
     }
     
     renderPeopleList = (peopleData) => {
       return peopleData.map((item, index) => 
-        (<TouchableOpacity onPress={()=> {this.goToPeopleDetail(item.url)}} key={`people_list${index}`} style={{flex: 1, backgroundColor: '#fff', margin: 10, padding: 10}}>
+        (<TouchableOpacity onPress={()=> {this.goToPeopleDetail()}} key={`people_list${index}`} style={{flex: 1, backgroundColor: '#fff', margin: 10, padding: 10}}>
           <View>
             <Text>{item.name}</Text>
           </View>
@@ -70,4 +71,4 @@ export class Home extends PureComponent {
     }
 }
 
-export default Home
+export default PeopleDetail
